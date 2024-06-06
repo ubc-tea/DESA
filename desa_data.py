@@ -90,9 +90,9 @@ def prepare_data(args, im_size):
                 transforms.ToTensor()
             ])
         # MNIST
-        unnormalized_mnist_trainset     = data_utils.DigitsDataset(data_path="../DeSAB/digit_data/digit_dataset/MNIST", channels=1, percent=args.percent, train=True,  transform=unnormalized_transform_mnist)
-        mnist_trainset     = data_utils.DigitsDataset(data_path="../DeSAB/digit_data/digit_dataset/MNIST", channels=1, percent=args.percent, train=True,  transform=transform_mnist)
-        mnist_testset      = data_utils.DigitsDataset(data_path="../DeSAB/digit_data/digit_dataset/MNIST", channels=1, percent=args.percent, train=False, transform=transform_mnist)
+        unnormalized_mnist_trainset     = data_utils.DigitsDataset(data_path="./digit_data/digit_dataset/MNIST", channels=1, percent=args.percent, train=True,  transform=unnormalized_transform_mnist)
+        mnist_trainset     = data_utils.DigitsDataset(data_path="./digit_data/digit_dataset/MNIST", channels=1, percent=args.percent, train=True,  transform=transform_mnist)
+        mnist_testset      = data_utils.DigitsDataset(data_path="./digit_data/digit_dataset/MNIST", channels=1, percent=args.percent, train=False, transform=transform_mnist)
         # unnormalized_mnist_trainset = torchvision.datasets.MNIST(root="./digit_data", train=True, transform=unnormalized_transform_mnist, download=True)
         # mnist_trainset = torchvision.datasets.MNIST(root="./digit_data", train=True, transform=transform_mnist, download=True)
         # mnist_testset = torchvision.datasets.MNIST(root="./digit_data", train=False, transform=transform_mnist, download=True)
@@ -100,8 +100,8 @@ def prepare_data(args, im_size):
 
         # SVHN
         unnormalized_svhn_trainset      = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/SVHN', channels=3, percent=args.percent,  train=True,  transform=unnormalized_transform_svhn)
-        svhn_trainset      = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/SVHN', channels=3, percent=args.percent,  train=True,  transform=transform_svhn)
-        svhn_testset       = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/SVHN', channels=3, percent=args.percent,  train=False, transform=transform_svhn)
+        svhn_trainset      = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/SVHN', channels=3, percent=args.percent,  train=True,  transform=transform_svhn)
+        svhn_testset       = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/SVHN', channels=3, percent=args.percent,  train=False, transform=transform_svhn)
         # unnormalized_svhn_trainset = torchvision.datasets.SVHN(root="./digit_data", split='train', transform=unnormalized_transform_svhn, download=True)
         # svhn_trainset = torchvision.datasets.SVHN(root="./digit_data", split='train', transform=transform_svhn, download=True)
         # svhn_testset = torchvision.datasets.SVHN(root="./digit_data", split='test', transform=transform_svhn, download=True)
@@ -109,8 +109,8 @@ def prepare_data(args, im_size):
 
         # USPS
         unnormalized_usps_trainset      = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/USPS', channels=1, percent=args.percent,  train=True,  transform=unnormalized_transform_usps)
-        usps_trainset      = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/USPS', channels=1, percent=args.percent,  train=True,  transform=transform_usps)
-        usps_testset       = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/USPS', channels=1, percent=args.percent,  train=False, transform=transform_usps)
+        usps_trainset      = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/USPS', channels=1, percent=args.percent,  train=True,  transform=transform_usps)
+        usps_testset       = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/USPS', channels=1, percent=args.percent,  train=False, transform=transform_usps)
         # unnormalized_usps_trainset = torchvision.datasets.USPS(root="./digit_data", train=True, transform=unnormalized_transform_usps, download=True)
         # usps_trainset = torchvision.datasets.USPS(root="./digit_data", train=True, transform=transform_usps, download=True)
         # usps_testset = torchvision.datasets.USPS(root="./digit_data", train=False, transform=transform_usps, download=True)
@@ -118,8 +118,8 @@ def prepare_data(args, im_size):
 
         # Synth Digits
         unnormalized_synth_trainset     = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/SynthDigits/', channels=3, percent=args.percent,  train=True,  transform=unnormalized_transform_synth)
-        synth_trainset     = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/SynthDigits/', channels=3, percent=args.percent,  train=True,  transform=transform_synth)
-        synth_testset      = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/SynthDigits/', channels=3, percent=args.percent,  train=False, transform=transform_synth)
+        synth_trainset     = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/SynthDigits/', channels=3, percent=args.percent,  train=True,  transform=transform_synth)
+        synth_testset      = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/SynthDigits/', channels=3, percent=args.percent,  train=False, transform=transform_synth)
         # unnormalized_synth_trainset     = ImageFolder('./digit_data/synthetic_digits/imgs_train', transform=unnormalized_transform_synth)
         # synth_trainset     = ImageFolder('./digit_data/synthetic_digits/imgs_train', transform=transform_synth)
         # synth_testset     = ImageFolder('./digit_data/synthetic_digits/imgs_valid', transform=transform_synth)
@@ -127,8 +127,8 @@ def prepare_data(args, im_size):
 
         # MNIST-M
         unnormalized_mnistm_trainset     = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/MNIST_M/', channels=3, percent=args.percent,  train=True,  transform=unnormalized_transform_mnistm)
-        mnistm_trainset     = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/MNIST_M/', channels=3, percent=args.percent,  train=True,  transform=transform_mnistm)
-        mnistm_testset      = data_utils.DigitsDataset(data_path='../DeSAB/digit_data/digit_dataset/MNIST_M/', channels=3, percent=args.percent,  train=False, transform=transform_mnistm)
+        mnistm_trainset     = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/MNIST_M/', channels=3, percent=args.percent,  train=True,  transform=transform_mnistm)
+        mnistm_testset      = data_utils.DigitsDataset(data_path='./digit_data/digit_dataset/MNIST_M/', channels=3, percent=args.percent,  train=False, transform=transform_mnistm)
         # unnormalized_mnistm_trainset     = ImageFolder('./digit_data/mnistm/train', transform=unnormalized_transform_mnistm)
         # mnistm_trainset     = ImageFolder('./digit_data/mnistm/train', transform=transform_mnistm)
         # mnistm_testset     = ImageFolder('./digit_data/mnistm/test', transform=transform_mnistm)

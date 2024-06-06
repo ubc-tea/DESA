@@ -9,14 +9,12 @@ import torch
 from torch import nn, optim
 import time
 import copy
-# from fedbn_nets.models import DigitModel
 import argparse
 import numpy as np
 import torchvision
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
 
-# import fedbn_data_utils as data_utils
 from utils import get_network, get_time, TensorDataset
 from condensation import distribution_matching, distribution_matching_DP
 from torchvision.utils import save_image
@@ -34,39 +32,7 @@ from pyvacymaster.pyvacy import sampling as pysampling
 
 from desa_data import prepare_data
 
-# class MyImageModule(nn.Module):
-#     def __init__(self, num_classes, ipc, channel, im_size, device):
-#         super(MyImageModule, self).__init__()
-#         self.data = nn.Parameter(torch.randn(size=(num_classes*ipc, channel, im_size[0], im_size[1]), dtype=torch.float, requires_grad=True, device=device))
 
-# class BNFeatureHook:
-#     """
-#     Implementation of the forward hook to track feature statistics and compute a loss on them.
-#     Will compute mean and variance, and will use l2 as a loss
-#     """
-#     def __init__(self, module):
-#         self.hook = module.register_forward_hook(self.hook_fn)
-
-#     def hook_fn(self, module, input, output):
-#         # hook co compute deepinversion's feature distribution regularization
-#         nch = input[0].shape[1]
-#         mean = input[0].mean([0, 2, 3])
-#         var = (input[0].permute(1, 0, 2,
-#                                 3).contiguous().view([nch,
-#                                                       -1]).var(1,
-#                                                                unbiased=False))
-
-#         # forcing mean and variance to match between two distributions
-#         # other ways might work better, i.g. KL divergence
-#         r_feature = torch.norm(module.running_var.data - var, 2) + torch.norm(
-#             module.running_mean.data - mean, 2)
-#         self.mean = mean
-#         self.var = var
-#         self.r_feature = r_feature
-#         # must have no output
-
-#     def close(self):
-#         self.hook.remove()
 
 def GetPretrained(path, means, stds, im_size, num_classes, client_num, client_model_names, device, DP=False, ipc = 50, padding = 2):
     images_all = []
@@ -107,9 +73,7 @@ def calculate_kd_loss(y_pred_student, y_pred_teacher, y_true, loss_fn, temp=20.,
         loss += (distil_weight * temp * temp) * loss_fn(
             soft_student_out, soft_teacher_out
         )
-        # print(F.cross_entropy(y_pred_student, y_true))
-        # print(loss_fn(soft_student_out, soft_teacher_out))
-        # print(loss.item())
+        
 
         return loss
 
@@ -146,8 +110,6 @@ def train_vhl(model, optimizer, loss_fun, device, train_loader, virtual_loader, 
     train_iter = iter(train_loader)
     virtual_iter = iter(virtual_loader)
 
-    # global_train_iter = iter(global_train_loader)
-    # print(len(ori_train_iter), len(global_train_iter))
 
     for step in range(len(train_iter)):
 
@@ -158,11 +120,6 @@ def train_vhl(model, optimizer, loss_fun, device, train_loader, virtual_loader, 
 
         classification_loss = loss_fun(output, y)
 
-        # similarity model update
-        # Constrastive
-        # server_images, server_labels = next(global_train_iter)
-        # server_images = server_images.to(device).float()
-        # server_labels = server_labels.to(device).long()
         align_loss = 0
         try:
             x_virtual, y_virtual = next(virtual_iter)
@@ -233,10 +190,6 @@ def train_kd(model, teacher_models, train_loader, virtual_loader, optimizer, kd_
         loss.backward()
         loss_all += loss.item()
         optimizer.step()
-        # print(output)
-        # print(output_target)
-        # print(loss.item())
-        # sys.exit()
 
         pred = output.data.max(1)[1]
         correct += pred.eq(y.view(-1)).sum().item()
@@ -296,7 +249,6 @@ def train_kd_vhl(client_list, model, example_logits, train_loader, kd_loader, re
         y_reg = y_reg.to(device).long()
         reg_feature = model.embed(x_reg).detach()
         loss_reg = distance_loss(features, reg_feature, y, y_reg) # sup contrastive
-        # loss_reg = torch.sum((torch.mean(features, dim=0) - torch.mean(server_feature, dim=0))**2)
 
         loss = lambda_ori * loss_ori + lambda_kd * loss_kd + lambda_reg * loss_reg
         loss_kd_all += loss_kd.item()
@@ -308,11 +260,7 @@ def train_kd_vhl(client_list, model, example_logits, train_loader, kd_loader, re
         loss_ori_all += loss_ori.item()
         loss_reg_all += loss_reg.item()
         optimizer.step()
-        # print(output)
-        # print(output_target)
-        # print(loss.item())
-        # sys.exit()
-
+        
         pred = output.data.max(1)[1]
         correct += pred.eq(y.view(-1)).sum().item()
     return loss_all/len(train_iter), loss_ori_all/len(train_iter), loss_kd_all/len(train_iter), loss_reg_all/len(train_iter), correct/len(train_loader.dataset)
@@ -339,8 +287,6 @@ def get_averaged_digits(teacher_models, virtual_loader, device, client_list):
                 output_targets[i].append(output_target_tmp)
             # output_target = torch.mean(torch.stack(output_targets), dim=0)
 
-    # for i in range(len(teacher_models)):
-    #     output_targets[i] = torch.mean(torch.cat(output_targets[i], dim=0), dim=0)
 
     return output_targets
 
@@ -517,33 +463,6 @@ if __name__ == '__main__':
     train_datasets, test_datasets, train_loaders, test_loaders, concated_test_loader, MEANS, STDS = prepare_data(args, im_size)
     client_num = len(datasets)
 
-    # ''' get example images '''
-    # for client_idx in range(client_num):
-    #     # organize the real dataset
-    #     images_all = []
-    #     labels_all = []
-    #     indices_class = [[] for c in range(num_classes)]
-    #     images_all = [torch.unsqueeze(train_datasets[client_idx][i][0], dim=0) for i in range(len(train_datasets[client_idx]))]
-    #     labels_all = [train_datasets[client_idx][i][1] for i in range(len(train_datasets[client_idx]))]
-    #     for i, lab in enumerate(labels_all):
-    #         indices_class[lab].append(i)
-    #     images_all = torch.cat(images_all, dim=0).to(args.device)
-    #     labels_all = torch.tensor(labels_all, dtype=torch.long, device=args.device)
-
-    #     image_real = [get_images(images_all, indices_class, c, 3) for c in range(3)]
-    #     image_real = torch.cat(image_real)
-
-    #     save_name = os.path.join('./', f'client{client_idx}_imgs.png')
-        
-    #     image_syn_vis = copy.deepcopy(image_real.detach().cpu())
-    #     # print(image_syn_vis[:, 2].size())
-    #     for ch in range(channel):
-    #         image_syn_vis[:, ch] = image_syn_vis[:, ch] * STDS[client_idx][ch] + MEANS[client_idx][ch]
-    #     image_syn_vis[image_syn_vis<0] = 0.0
-    #     image_syn_vis[image_syn_vis>1] = 1.0
-    #     save_image(image_syn_vis, save_name, nrow=3)
-    
-    # sys.exit()
 
 
     for i, dataset in enumerate(datasets):
@@ -607,25 +526,11 @@ if __name__ == '__main__':
         client_models_pre[i].eval()
     
     '''Train/Load virtual data'''
-    # image_syns_tmp = torch.randn(size=(num_classes*args.ipc, channel, im_size[0], im_size[1]), dtype=torch.float, requires_grad=True, device=args.device)
-    # image_syns_tmp = MyImageModule(num_classes, args.ipc, channel, im_size, args.device)
     label_syns_tmp = torch.tensor(np.array([np.ones(args.ipc)*i for i in range(num_classes)]), dtype=torch.long, requires_grad=False, device=args.device).view(-1) # [0,0,0, 1,1,1, ..., 9,9,9]
     image_syns = [torch.randn(size=(num_classes*args.ipc, channel, im_size[0], im_size[1]), dtype=torch.float, requires_grad=True, device=args.device) for idx in range(client_num)]
     label_syns = [copy.deepcopy(label_syns_tmp).to(args.device) for idx in range(client_num)]
     
-    # print('initialize client synthetic data from random real images')
-    # for client_idx in range(client_num):
-    #     images_all = []
-    #     labels_all = []
-    #     indices_class = [[] for c in range(num_classes)]
-    #     images_all = [torch.unsqueeze(train_datasets[client_idx][i][0], dim=0) for i in range(len(train_datasets[client_idx]))]
-    #     labels_all = [train_datasets[client_idx][i][1] for i in range(len(train_datasets[client_idx]))]
-    #     for i, lab in enumerate(labels_all):
-    #         indices_class[lab].append(i)
-    #     images_all = torch.cat(images_all, dim=0).to(args.device)
-    #     labels_all = torch.tensor(labels_all, dtype=torch.long, device=args.device)
-    #     for c in range(num_classes):
-    #         image_syns[client_idx].data[c*args.ipc:(c+1)*args.ipc] = get_images(images_all, indices_class, c, args.ipc).detach().data
+    
 
     data_path = f'{SAVE_PATH}'
 
