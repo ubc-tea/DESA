@@ -14,6 +14,6 @@ Please download the digits data [here](https://drive.google.com/drive/folders/1s
 
 ### Run with pretrained models
 
-'''
+```
 python iterative_desab.py --dataset=digits --ipc=50 --model_hetero=True
-'''
+```
