@@ -1,13 +1,13 @@
 # DESA
 The official implementation of paper "[Overcoming Data and Model heterogeneities in Decentralized Federated Learning via Synthetic Anchors](https://arxiv.org/abs/2405.11525)" accepted at ICML 2024
 
-![DeSA_main_figure](/img/DeSA_pipeline.pdf)
+![DeSA_main_figure](/img/DeSA_pipeline.png)
 
 ## Abstract
 
 Conventional Federated Learning (FL) involves collaborative training of a global model while maintaining user data privacy. One of its branches, decentralized FL, is a serverless network that allows clients to own and optimize different local models separately, which results in saving management and communication resources. Despite the promising advancements in decentralized FL, it may reduce model generalizability due to lacking a global model. In this scenario, managing data and model heterogeneity among clients becomes a crucial problem, which poses a unique challenge that must be overcome: *How can every client's local model learn generalizable representation in a decentralized manner?* To address this challenge, we propose a novel **De**centralized FL technique by introducing **S**ynthetic **A**nchors, dubbed as DeSA. Based on the theory of domain adaptation and Knowledge Distillation (KD), we theoretically and empirically show that synthesizing global anchors based on raw data distribution facilitates mutual knowledge transfer. We further design two effective regularization terms for local training: 1) *REG loss* that regularizes the distribution of the client's latent embedding with the anchors and 2) *KD loss* that enables clients to learn from others. Through extensive experiments on diverse client data distributions, we showcase the effectiveness of DeSA in enhancing both inter- and intra-domain accuracy of each client.
 
-![loss_effect](/img/loss_effect.pdf)
+![loss_effect](/img/loss_effect.png)
 
 ## How to run
 
