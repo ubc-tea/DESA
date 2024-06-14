@@ -9,12 +9,13 @@ Conventional Federated Learning (FL) involves collaborative training of a global
 
 ![loss_effect](/img/loss_effect.png)
 
-## How to run
-
-### System requirement
+## System requirement
 
 We recommend using conda to install the environment.
 Please use [environment.txt](https://github.com/ubc-tea/DESA/blob/main/environment.txt) to set up the conda environment.
+
+## Verify pretrained DIGITS model
+
 
 ### Download DIGITS data
 
@@ -25,6 +26,40 @@ Please download the digits data [here](https://drive.google.com/drive/folders/1s
 ```
 python iterative_desab.py --dataset=digits --ipc=50 --model_hetero=True
 ```
+
+## How to run - OFFICE and CIFAR10C experiments
+
+### Download data
+
+Please download the preprocessed data and put them into data folder. [OFFICE](https://drive.google.com/drive/folders/1fALcd1iYzJynuy4imc0zqFsGbGf5kVFw?usp=sharing) [CIFAR10C](https://drive.google.com/drive/folders/1BIBvskSH-gbt7s50fRrJO5Rld1XXqCbb?usp=sharing)
+
+### Run experiments
+
+Please use the following scripts to run the experiments from scratch
+
+```
+python iterative_desab.py --dataset=office --ipc=10 --model_hetero=True --pretrain=True --generate_image=True --KD=True
+python iterative_desab.py --dataset=cifar10c --ipc=50 --model_hetero=True --pretrain=True --generate_image=True --KD=True --client_ratio=0.1
+python iterative_desab.py --dataset=cifar10c --ipc=10 --model_hetero=True --pretrain=True --generate_image=True --KD=True --client_ratio=0.2
+```
+
+## DP experiments
+
+Currently, DeSA only supports DIGITS experiment.
+
+### Run experiments
+
+Please use the following scripts to run the experiment from scratch
+
+```
+python iterative_desab.py --dataset=digits --ipc=10 --model_hetero=True --pretrain=True --generate_image=True --KD=True --DP=True
+```
+
+## MIA experiments
+
+![mia](/img/mia.png)
+
+For our MIA experiment, we follow the metric from [Carlini et al.](https://arxiv.org/abs/2112.03570).
 
 ## Citation
 If you find this work helpful, please cite our paper as follows:
